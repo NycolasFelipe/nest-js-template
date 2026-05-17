@@ -1,51 +1,46 @@
 # NestJS + TypeORM Template
 
-Template de API para acelerar o bootstrap de novos projetos com **NestJS + TypeORM + PostgreSQL**.
+Template para iniciar APIs com NestJS e TypeORM usando uma estrutura pronta para escalar com consistência.
 
 ## Objetivo
 
-Este repositório existe para servir como ponto de partida padronizado, com:
+Este repositório é um ponto de partida para novos projetos backend com:
 
-- Estrutura modular por camadas.
-- Configuração de banco pronta para desenvolvimento.
-- Exemplo funcional de módulo com CRUD.
-- Base de testes unitários e de integração com banco real via Testcontainers.
-- Convenções de organização e imports para escalar o código com consistência.
+- arquitetura em camadas por módulo
+- integração com PostgreSQL via TypeORM
+- padrão de validação com `class-validator`
+- testes unitários e de integração com banco real (Testcontainers)
+- pipeline de Pull Request no GitHub Actions
 
 ## Stack
 
-- Node.js + TypeScript
 - NestJS
+- TypeScript
 - TypeORM
 - PostgreSQL
 - Jest
 - Testcontainers
 
-## Estrutura do Projeto
+## Estrutura
 
-Organização principal em `src`:
+- `src/common`: recursos compartilhados (utils, DTOs, config de banco)
+- `src/modules`: módulos de negócio
+- `src/modules/module-example`: módulo de referência com CRUD completo
 
-- `common`: utilitários e componentes compartilhados.
-- `modules`: módulos de negócio.
-- `config`: espaço para configurações globais futuras.
+Camadas do módulo de exemplo:
 
-Módulo de exemplo (`module-example`) seguindo camadas:
+- `domain`
+- `application`
+- `infrastructure`
+- `presentation`
 
-- `application`: DTOs de aplicação e casos de uso.
-- `domain`: entidades, contratos e regras de domínio.
-- `infrastructure`: implementação de persistência (TypeORM).
-- `presentation`: controllers e DTOs HTTP.
-- `tests`: testes unitários e integração do módulo.
-
-## Configuração de Ambiente
-
-Crie seu arquivo `.env`:
+## Configuração de ambiente
 
 ```bash
 cp .env.example .env
 ```
 
-Variáveis usadas pela conexão TypeORM:
+Variáveis de banco:
 
 - `DB_ENABLED`
 - `DB_HOST`
@@ -58,13 +53,13 @@ Variáveis usadas pela conexão TypeORM:
 - `DB_RETRY_ATTEMPTS`
 - `DB_RETRY_DELAY`
 
-Se quiser subir a API sem banco local:
+Para subir sem banco:
 
 ```env
 DB_ENABLED=false
 ```
 
-## Como Executar
+## Execução
 
 Instalar dependências:
 
@@ -72,22 +67,47 @@ Instalar dependências:
 npm install
 ```
 
-Rodar em desenvolvimento:
+Desenvolvimento:
 
 ```bash
 npm run start:dev
 ```
 
-Build de produção:
+Build e produção:
 
 ```bash
 npm run build
 npm run start:prod
 ```
 
-## Endpoints de Exemplo
+## Testes
 
-Com a API no ar:
+- `npm test`: roda unit + integration
+- `npm run test:unit`: roda somente unitários
+- `npm run test:integration`: roda integração com Testcontainers
+- `npm run test:e2e`: suíte e2e separada
+
+Pré-requisito para integração:
+
+- Docker instalado e em execução
+
+## CI (Pull Request)
+
+Workflow: `.github/workflows/pull-request.yml`
+
+Executa em PR para `main` (exceto draft):
+
+1. `quality`
+- instala dependências
+- lint
+- build
+- testes unitários
+
+2. `integration-tests`
+- valida Docker no runner
+- executa testes de integração com Testcontainers
+
+## Endpoints de exemplo
 
 - `POST /examples`
 - `GET /examples`
@@ -95,37 +115,10 @@ Com a API no ar:
 - `PATCH /examples/:id`
 - `DELETE /examples/:id`
 
-## Testes
+## Como usar como base
 
-Comandos principais:
-
-- `npm test`: roda **unit + integration**.
-- `npm run test:unit`: roda apenas unitários.
-- `npm run test:integration`: roda integração com PostgreSQL em container.
-- `npm run test:e2e`: suíte e2e separada.
-
-### Testes de Integração com Testcontainers
-
-Os testes de integração iniciam um PostgreSQL real em container Docker.
-
-Pré-requisitos:
-
-- Docker instalado.
-- Docker daemon em execução.
-
-## Convenções do Template
-
-- Imports internos via alias `src/...`.
-- Validação com `class-validator` nos DTOs.
-- `ValidationPipe` global com `whitelist` e `forbidNonWhitelisted`.
-- Sem conversão implícita global de tipos na validação.
-
-## Como Usar Este Repositório como Base
-
-Fluxo recomendado para novos projetos:
-
-1. Faça um clone deste template.
-2. Renomeie o módulo de exemplo para o contexto do domínio real.
-3. Substitua casos de uso, entidade e controller do exemplo.
-4. Ajuste `.env` para o ambiente do projeto.
-5. Expanda os testes mantendo a mesma estratégia de unit + integration.
+1. Clone este template.
+2. Renomeie/remova o `module-example`.
+3. Crie seus módulos mantendo o mesmo padrão de camadas.
+4. Ajuste `.env` e regras de negócio.
+5. Expanda a cobertura de testes.
