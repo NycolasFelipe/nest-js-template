@@ -1,10 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+// Database
+import {
+  getTypeOrmConfig,
+  isDatabaseEnabled,
+} from 'src/common/database/typeorm/config/typeorm.config';
+
+// Modules
+import { ModuleExampleModule } from 'src/modules/module-example/module-example.module';
+
+const databaseImports = isDatabaseEnabled
+  ? [TypeOrmModule.forRoot(getTypeOrmConfig()), ModuleExampleModule]
+  : [];
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [...databaseImports],
 })
 export class AppModule {}
