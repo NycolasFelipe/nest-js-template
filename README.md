@@ -82,16 +82,43 @@ docker compose up --build
 
 No Docker, a API usa `DB_DOCKER_HOST` para conectar no serviço `postgres` da rede do Compose. Fora do Docker, use `DB_HOST`.
 
+Rodar SigNoz self-hosted para monitoramento:
+
+```bash
+cp .env.signoz.example .env.signoz
+docker compose up -d
+docker compose --env-file .env.signoz -f docker-compose.signoz.yml up -d
+```
+
+- API: `http://localhost:3000`
+- SigNoz: `http://localhost:8080`
+- OTLP gRPC: `localhost:4317`
+- OTLP HTTP: `localhost:4318`
+
+Para o SigNoz self-hosted, reserve pelo menos 4 GB de memória para o Docker.
+
+Para ver a API no SigNoz, gere algumas requisições:
+
+```bash
+curl http://localhost:3000/examples
+```
+
+Depois abra `http://localhost:8080` e procure o serviço configurado em `OTEL_SERVICE_NAME`.
+
+Se a tela inicial ainda mostrar `You are not sending traces yet`, abra `Services`, ajuste o intervalo de tempo para incluir os últimos minutos e clique em `Refresh`. O collector pode levar alguns segundos para agregar as métricas de APM depois dos primeiros spans.
+
 Parar containers:
 
 ```bash
 docker compose down
+docker compose --env-file .env.signoz -f docker-compose.signoz.yml down
 ```
 
 Remover também o volume do PostgreSQL:
 
 ```bash
 docker compose down -v
+docker compose --env-file .env.signoz -f docker-compose.signoz.yml down -v
 ```
 
 Build e produção:
