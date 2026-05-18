@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 // Repositories
-import { ExampleRepository } from 'src/modules/module-example/domain/repositories/example.repository';
-
-// DTOs
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { CreateExampleDto } from 'src/modules/module-example/application/dto/create.dto';
-import { UpdateExampleDto } from 'src/modules/module-example/application/dto/update.dto';
+import type {
+  ExampleRepository,
+  CreateExampleInput,
+  FindAllExamplesInput,
+  UpdateExampleInput,
+} from 'src/modules/module-example/domain/repositories/example.repository';
 
 // Entities
 import { ExampleEntity } from 'src/modules/module-example/domain/entities/example.entity';
@@ -22,7 +22,7 @@ export class ExampleTypeormRepository implements ExampleRepository {
   ) {}
 
   /** Cria um novo exemplo */
-  async create(data: CreateExampleDto): Promise<ExampleEntity> {
+  async create(data: CreateExampleInput): Promise<ExampleEntity> {
     const entity = this.repository.create({
       name: data.name,
       description: data.description ?? null,
@@ -39,7 +39,7 @@ export class ExampleTypeormRepository implements ExampleRepository {
   }
 
   /** Lista todos os exemplos */
-  async findAll(pagination: PaginationDto): Promise<ExampleEntity[]> {
+  async findAll(pagination: FindAllExamplesInput): Promise<ExampleEntity[]> {
     const entities = await this.repository.find({
       take: pagination.limit,
       skip: pagination.offset,
@@ -52,7 +52,7 @@ export class ExampleTypeormRepository implements ExampleRepository {
   /** Atualiza um exemplo existente */
   async update(
     id: number,
-    data: UpdateExampleDto,
+    data: UpdateExampleInput,
   ): Promise<ExampleEntity | null> {
     const current = await this.repository.findOne({ where: { id } });
 
