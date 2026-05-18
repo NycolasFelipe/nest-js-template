@@ -34,6 +34,118 @@ Camadas do módulo de exemplo:
 - `infrastructure`
 - `presentation`
 
+## Estrutura de pastas
+
+```text
+src/
+  common/
+    database/
+      typeorm/
+        config/
+        migrations/
+        seeds/
+    decorators/
+    dto/
+    errors/
+    filters/
+    guards/
+    interceptors/
+    pipes/
+    types/
+    utils/
+  config/
+  modules/
+    module-example/
+      application/
+        dto/
+        use-cases/
+      domain/
+        entities/
+        errors/
+        repositories/
+      infrastructure/
+        persistence/
+          providers/
+          typeorm/
+      presentation/
+        http/
+          controllers/
+          dto/
+      tests/
+        integration/
+        unit/
+```
+
+`src/common` concentra recursos compartilhados entre módulos. Use para DTOs genéricos, helpers, pipes, guards, filters, interceptors e configurações comuns.
+
+`src/config` concentra configuração da aplicação, como validação de variáveis de ambiente.
+
+`src/modules` concentra os módulos de negócio. Cada módulo deve conter suas próprias camadas e não depender diretamente da estrutura interna de outro módulo.
+
+### Camadas de um módulo
+
+`domain`: regras e contratos centrais do módulo. Aqui ficam entidades de domínio, erros de domínio e contratos como repositórios.
+
+Exemplo:
+
+```text
+src/modules/users/domain/entities/user.entity.ts
+src/modules/users/domain/repositories/user.repository.ts
+src/modules/users/domain/errors/user-not-found.error.ts
+```
+
+`application`: casos de uso e DTOs usados pela aplicação para executar ações do domínio.
+
+Exemplo:
+
+```text
+src/modules/users/application/use-cases/create-user.use-case.ts
+src/modules/users/application/use-cases/find-user.use-case.ts
+src/modules/users/application/dto/create.dto.ts
+```
+
+`infrastructure`: detalhes técnicos e integrações externas. No template, a persistência TypeORM fica aqui.
+
+Exemplo:
+
+```text
+src/modules/users/infrastructure/persistence/typeorm/user.orm-entity.ts
+src/modules/users/infrastructure/persistence/typeorm/user-typeorm.repository.ts
+src/modules/users/infrastructure/persistence/providers/user.providers.ts
+```
+
+`presentation`: entrada HTTP do módulo. Aqui ficam controllers e DTOs específicos de request/response HTTP.
+
+Exemplo:
+
+```text
+src/modules/users/presentation/http/controllers/user.controller.ts
+src/modules/users/presentation/http/dto/create.dto.ts
+src/modules/users/presentation/http/dto/update.dto.ts
+```
+
+`tests`: testes unitários e de integração do módulo.
+
+Exemplo:
+
+```text
+src/modules/users/tests/unit/create-user.use-case.spec.ts
+src/modules/users/tests/integration/create-user.integration.spec.ts
+```
+
+### Exemplo de fluxo
+
+Para criar um novo recurso `users`:
+
+1. Crie `src/modules/users/users.module.ts`.
+2. Crie a entidade de domínio em `domain/entities`.
+3. Crie o contrato do repositório em `domain/repositories`.
+4. Crie os casos de uso em `application/use-cases`.
+5. Crie a entidade ORM e o repositório TypeORM em `infrastructure/persistence/typeorm`.
+6. Registre o provider em `infrastructure/persistence/providers`.
+7. Crie o controller em `presentation/http/controllers`.
+8. Importe `UsersModule` em `src/app.module.ts`.
+
 ## Configuração de ambiente
 
 ```bash
