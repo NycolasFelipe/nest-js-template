@@ -15,7 +15,7 @@ import {
 // Modules
 import { ModuleExampleModule } from 'src/modules/module-example/module-example.module';
 
-loadDotenv();
+loadDotenv({ quiet: true });
 
 const databaseImports = isDatabaseEnabled
   ? [
