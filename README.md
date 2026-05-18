@@ -73,6 +73,27 @@ Desenvolvimento:
 npm run start:dev
 ```
 
+Rodar com Docker:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+No Docker, a API usa `DB_DOCKER_HOST` para conectar no serviço `postgres` da rede do Compose. Fora do Docker, use `DB_HOST`.
+
+Parar containers:
+
+```bash
+docker compose down
+```
+
+Remover também o volume do PostgreSQL:
+
+```bash
+docker compose down -v
+```
+
 Build e produção:
 
 ```bash
